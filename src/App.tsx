@@ -303,19 +303,19 @@ export default function App() {
       <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMCwgMCwgMCwgMC4wNSkiLz48L3N2Zz4=')] [mask-image:radial-gradient(ellipse_at_center,black_40%,transparent_100%)] pointer-events-none" />
 
       {/* Top Navigation */}
-      <div className="absolute top-6 left-6 right-6 flex justify-between items-center z-30 pointer-events-none">
-        <div className="flex items-center gap-3 pointer-events-auto">
-          <div className="w-10 h-10 bg-yellow-400 rounded-2xl flex items-center justify-center shadow-lg shadow-yellow-400/20">
-            <Sparkles className="w-5 h-5 text-black" />
+      <div className="absolute top-3 left-3 right-3 sm:top-6 sm:left-6 sm:right-6 flex justify-between items-center z-30 pointer-events-none">
+        <div className="flex items-center gap-1.5 sm:gap-3 pointer-events-auto">
+          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-yellow-400 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg shadow-yellow-400/20 shrink-0">
+            <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-black" />
           </div>
-          <h1 className="text-xl font-bold tracking-tight text-gray-900 mr-4">创意发散助手</h1>
+          <h1 className="text-base sm:text-xl font-bold tracking-tight text-gray-900 mr-1 sm:mr-4 hidden sm:block">创意发散助手</h1>
           
           <button
             onClick={() => setIsFavoritesPanelOpen(!isFavoritesPanelOpen)}
-            className="px-4 py-2.5 bg-white/80 backdrop-blur-xl border border-gray-200/50 rounded-2xl text-sm font-medium text-gray-700 hover:bg-yellow-50 hover:text-yellow-900 hover:border-yellow-200 transition-all shadow-sm flex items-center gap-2"
+            className="p-2 sm:px-4 sm:py-2.5 bg-white/80 backdrop-blur-xl border border-gray-200/50 rounded-xl sm:rounded-2xl text-sm font-medium text-gray-700 hover:bg-yellow-50 hover:text-yellow-900 hover:border-yellow-200 transition-all shadow-sm flex items-center gap-1.5 sm:gap-2"
           >
             <Star className="w-4 h-4" />
-            收藏夹
+            <span className="hidden sm:inline">收藏夹</span>
             {favorites.length > 0 && (
               <span className="w-5 h-5 bg-yellow-400 text-black rounded-full flex items-center justify-center text-xs font-bold">
                 {favorites.length}
@@ -324,13 +324,13 @@ export default function App() {
           </button>
         </div>
         
-        <div className="flex items-center gap-3 pointer-events-auto">
+        <div className="flex items-center gap-1.5 sm:gap-3 pointer-events-auto">
           <button
             onClick={() => setIsIdeaPanelOpen(true)}
-            className="px-4 py-2.5 bg-white/80 backdrop-blur-xl border border-gray-200/50 rounded-2xl text-sm font-medium text-gray-700 hover:bg-yellow-50 hover:text-yellow-900 hover:border-yellow-200 transition-all shadow-sm flex items-center gap-2"
+            className="p-2 sm:px-4 sm:py-2.5 bg-white/80 backdrop-blur-xl border border-gray-200/50 rounded-xl sm:rounded-2xl text-sm font-medium text-gray-700 hover:bg-yellow-50 hover:text-yellow-900 hover:border-yellow-200 transition-all shadow-sm flex items-center gap-1.5 sm:gap-2"
           >
             <Lightbulb className="w-4 h-4" />
-            创意方案
+            <span className="hidden sm:inline">创意方案</span>
             {selectedWords.length > 0 && (
               <span className="w-5 h-5 bg-yellow-400 text-black rounded-full flex items-center justify-center text-xs font-bold">
                 {selectedWords.length}
@@ -339,15 +339,15 @@ export default function App() {
           </button>
           <button
             onClick={() => setIsHistoryPanelOpen(true)}
-            className="p-2.5 bg-white/80 backdrop-blur-xl border border-gray-200/50 rounded-2xl text-gray-500 hover:bg-gray-50 hover:text-gray-900 transition-all shadow-sm"
+            className="p-2 sm:p-2.5 bg-white/80 backdrop-blur-xl border border-gray-200/50 rounded-xl sm:rounded-2xl text-gray-500 hover:bg-gray-50 hover:text-gray-900 transition-all shadow-sm"
           >
-            <Clock className="w-5 h-5" />
+            <Clock className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
           <button
             onClick={() => setIsSettingsOpen(true)}
-            className="p-2.5 bg-white/80 backdrop-blur-xl border border-gray-200/50 rounded-2xl text-gray-500 hover:bg-gray-50 hover:text-gray-900 transition-all shadow-sm"
+            className="p-2 sm:p-2.5 bg-white/80 backdrop-blur-xl border border-gray-200/50 rounded-xl sm:rounded-2xl text-gray-500 hover:bg-gray-50 hover:text-gray-900 transition-all shadow-sm"
           >
-            <SettingsIcon className="w-5 h-5" />
+            <SettingsIcon className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
         </div>
       </div>
@@ -377,13 +377,13 @@ export default function App() {
             scale: isInitial ? 1.1 : 1,
           }}
           transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-          className="absolute left-1/2 -translate-x-1/2 z-30 w-full max-w-xl px-6"
+          className="absolute left-1/2 -translate-x-1/2 z-30 w-full max-w-xl px-3 sm:px-6"
         >
           <form onSubmit={handleInitialSubmit} className="relative group">
             <div className={`absolute inset-0 bg-yellow-400/20 blur-2xl rounded-full transition-opacity duration-500 ${isInputFocused ? 'opacity-100' : 'opacity-0'}`} />
-            <div className="relative flex items-center bg-white/80 backdrop-blur-2xl border border-gray-200/50 rounded-full shadow-2xl overflow-hidden p-2 transition-all duration-300 hover:shadow-yellow-400/10">
-              <div className="pl-4 pr-2 text-gray-400">
-                <Search className="w-5 h-5" />
+            <div className="relative flex items-center bg-white/80 backdrop-blur-2xl border border-gray-200/50 rounded-full shadow-2xl overflow-hidden p-1.5 sm:p-2 transition-all duration-300 hover:shadow-yellow-400/10">
+              <div className="pl-3 pr-1 sm:pl-4 sm:pr-2 text-gray-400">
+                <Search className="w-4 h-4 sm:w-5 sm:h-5" />
               </div>
               <input
                 type="text"
@@ -392,14 +392,14 @@ export default function App() {
                 onFocus={() => setIsInputFocused(true)}
                 onBlur={() => setIsInputFocused(false)}
                 placeholder="输入词语或短句开始发散..."
-                className="flex-1 bg-transparent border-none outline-none text-gray-800 placeholder:text-gray-400 text-lg py-3 px-2"
+                className="flex-1 bg-transparent border-none outline-none text-gray-800 placeholder:text-gray-400 text-sm sm:text-lg py-2.5 sm:py-3 px-1.5 sm:px-2 min-w-0"
               />
               <button
                 type="submit"
                 disabled={!inputValue.trim()}
-                className="px-6 py-3 bg-black text-white rounded-full font-medium hover:bg-gray-900 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-black/10 flex items-center gap-2"
+                className="px-4 py-2.5 sm:px-6 sm:py-3 bg-black text-white rounded-full text-sm sm:text-base font-medium hover:bg-gray-900 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-black/10 flex items-center gap-2 shrink-0"
               >
-                开始发散
+                发散
               </button>
             </div>
           </form>

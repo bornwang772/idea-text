@@ -1,1 +1,19 @@
 @import "tailwindcss";
+
+/* Prevent double-tap-to-zoom on mobile (important for double-click node expansion) */
+* {
+  touch-action: manipulation;
+}
+
+/* Full screen app */
+html, body, #root {
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Prevent iOS zoom on input focus (font-size < 16px triggers zoom) */
+@media (max-width: 640px) {
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+}

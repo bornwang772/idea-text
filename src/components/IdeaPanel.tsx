@@ -21,7 +21,7 @@ export const IdeaPanel: React.FC<IdeaPanelProps> = ({ isOpen, onClose, ideas, is
         animate={{ opacity: 1, x: 0 }}
         exit={{ opacity: 0, x: 300 }}
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-        className="fixed right-6 top-24 bottom-24 w-96 bg-white/80 backdrop-blur-2xl border border-gray-200/50 rounded-3xl shadow-2xl flex flex-col overflow-hidden z-40"
+        className="fixed inset-x-2 bottom-2 top-16 sm:inset-x-auto sm:right-6 sm:top-24 sm:bottom-24 sm:w-96 bg-white/80 backdrop-blur-2xl border border-gray-200/50 rounded-2xl sm:rounded-3xl shadow-2xl flex flex-col overflow-hidden z-40"
       >
         <div className="flex items-center justify-between p-5 border-b border-gray-100/50 bg-white/50">
           <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
