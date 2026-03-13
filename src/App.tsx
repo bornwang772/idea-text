@@ -228,6 +228,45 @@ export default function App() {
     }
   };
 
+  const deleteNode = () => {
+    if (!contextMenu.node) return;
+    const nodeId = contextMenu.node.id;
+    
+    // Find all descendant node IDs recursively
+    const getDescendants = (parentId: string): string[] => {
+      const childIds = links
+        .filter(l => {
+          const sourceId = typeof l.source === 'string' ? l.source : (l.source as NodeData).id;
+          return sourceId === parentId;
+        })
+        .map(l => typeof l.target === 'string' ? l.target : (l.target as NodeData).id);
+      
+      const allDescendants: string[] = [...childIds];
+      childIds.forEach(cid => {
+        allDescendants.push(...getDescendants(cid));
+      });
+      return allDescendants;
+    };
+    
+    const idsToRemove = new Set([nodeId, ...getDescendants(nodeId)]);
+    
+    setNodes(prev => prev.filter(n => !idsToRemove.has(n.id)));
+    setLinks(prev => prev.filter(l => {
+      const sourceId = typeof l.source === 'string' ? l.source : (l.source as NodeData).id;
+      const targetId = typeof l.target === 'string' ? l.target : (l.target as NodeData).id;
+      return !idsToRemove.has(sourceId) && !idsToRemove.has(targetId);
+    }));
+    
+    setContextMenu({ ...contextMenu, node: null });
+  };
+
+  const expandContextMenuNode = () => {
+    if (!contextMenu.node) return;
+    if (!contextMenu.node.isExpanded) {
+      expandNode(contextMenu.node);
+    }
+  };
+
   const handleGenerateIdeas = async () => {
     const selectedWords = nodes.filter(n => n.isSelected).map(n => n.text);
     if (selectedWords.length === 0) return;
@@ -376,8 +415,11 @@ export default function App() {
         onSelect={toggleNodeSelection}
         onTranslate={translateNode}
         onFavorite={toggleFavorite}
+        onDelete={deleteNode}
+        onExpand={expandContextMenuNode}
         isSelected={contextMenu.node?.isSelected || false}
         isFavorited={contextMenu.node ? favorites.includes(contextMenu.node.text) : false}
+        isExpanded={contextMenu.node?.isExpanded || false}
       />
 
       {/* Modals & Panels */}
