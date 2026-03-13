@@ -1,0 +1,5 @@
+{
+  "name": "创意发散助手",
+  "description": "基于大模型的创意发散和联想工具，支持词语节点扩散、翻译、创意方案生成。",
+  "requestFramePermissions": []
+}
