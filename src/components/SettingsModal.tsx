@@ -80,7 +80,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, c
                   value={localConfig.model}
                   onChange={(e) => setLocalConfig({ ...localConfig, model: e.target.value })}
                   className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none transition-all"
-                  placeholder={localConfig.provider === 'gemini' ? 'gemini-3.1-flash-lite-preview' : 'deepseek-chat'}
+                  placeholder={localConfig.provider === 'gemini' ? 'gemini-2.0-flash' : 'deepseek-chat'}
                 />
               </div>
             </div>

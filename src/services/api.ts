@@ -1,4 +1,4 @@
-import { GoogleGenAI, ThinkingLevel } from '@google/genai';
+import { GoogleGenAI } from '@google/genai';
 import { ApiConfig } from '../types';
 
 // Demo mock data pools for when no API key is configured
@@ -71,40 +71,16 @@ export async function fetchAssociations(word: string, config: ApiConfig): Promis
 
   try {
     if (config.provider === 'gemini') {
-      const ai = new GoogleGenAI({ apiKey: config.apiKey });
-      const response = await ai.models.generateContent({
-        model: config.model || 'gemini-3.1-flash-lite-preview',
-        contents: prompt,
-        config: {
-          thinkingConfig: { thinkingLevel: ThinkingLevel.LOW }
-        }
-      });
-      return parseWords(response.text || '');
+      return await callGeminiForWords(prompt, config);
     } else {
-      // DeepSeek or Custom OpenAI compatible
-      const response = await fetch(`${config.baseUrl}/chat/completions`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${config.apiKey}`,
-        },
-        body: JSON.stringify({
-          model: config.model,
-          messages: [
-            { role: 'system', content: config.expandPrompt },
-            { role: 'user', content: `当前词语：${word}` }
-          ],
-          temperature: 0.7,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`API Error: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      const content = data.choices?.[0]?.message?.content || '';
-      return parseWords(content);
+      return parseWords(await callOpenAICompatible(
+        config,
+        [
+          { role: 'system', content: config.expandPrompt },
+          { role: 'user', content: `当前词语：${word}` }
+        ],
+        0.7
+      ));
     }
   } catch (error) {
     console.error('Failed to fetch associations:', error);
@@ -117,37 +93,15 @@ export async function fetchTranslation(word: string, config: ApiConfig): Promise
 
   try {
     if (config.provider === 'gemini') {
-      const ai = new GoogleGenAI({ apiKey: config.apiKey });
-      const response = await ai.models.generateContent({
-        model: config.model || 'gemini-3.1-flash-lite-preview',
-        contents: prompt,
-        config: {
-          thinkingConfig: { thinkingLevel: ThinkingLevel.LOW }
-        }
-      });
-      return (response.text || '').trim();
+      const text = await callGeminiForText(prompt, config);
+      return text.trim();
     } else {
-      const response = await fetch(`${config.baseUrl}/chat/completions`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${config.apiKey}`,
-        },
-        body: JSON.stringify({
-          model: config.model,
-          messages: [
-            { role: 'user', content: prompt }
-          ],
-          temperature: 0.3,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`API Error: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      return (data.choices?.[0]?.message?.content || '').trim();
+      const content = await callOpenAICompatible(
+        config,
+        [{ role: 'user', content: prompt }],
+        0.3
+      );
+      return content.trim();
     }
   } catch (error) {
     console.error('Failed to fetch translation:', error);
@@ -160,40 +114,89 @@ export async function generateIdeas(words: string[], config: ApiConfig): Promise
 
   try {
     if (config.provider === 'gemini') {
-      const ai = new GoogleGenAI({ apiKey: config.apiKey });
-      const response = await ai.models.generateContent({
-        model: config.model || 'gemini-3.1-pro-preview',
-        contents: prompt,
-      });
-      return response.text || '';
+      const result = await callGeminiForText(prompt, config);
+      return result;
     } else {
-      const response = await fetch(`${config.baseUrl}/chat/completions`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${config.apiKey}`,
-        },
-        body: JSON.stringify({
-          model: config.model,
-          messages: [
-            { role: 'system', content: config.ideaPrompt },
-            { role: 'user', content: `选中的词语：${words.join('、')}` }
-          ],
-          temperature: 0.8,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`API Error: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      return data.choices?.[0]?.message?.content || '';
+      return await callOpenAICompatible(
+        config,
+        [
+          { role: 'system', content: config.ideaPrompt },
+          { role: 'user', content: `选中的词语：${words.join('、')}` }
+        ],
+        0.8
+      );
     }
   } catch (error) {
     console.error('Failed to generate ideas:', error);
     throw error;
   }
+}
+
+// ── Helper: Call Gemini API (returns parsed words) ──
+async function callGeminiForWords(prompt: string, config: ApiConfig): Promise<string[]> {
+  try {
+    const ai = new GoogleGenAI({ apiKey: config.apiKey });
+    const response = await ai.models.generateContent({
+      model: config.model || 'gemini-2.0-flash',
+      contents: prompt,
+    });
+    return parseWords(response.text || '');
+  } catch (err: any) {
+    const msg = err?.message || err?.toString() || '未知错误';
+    throw new Error(`Gemini API 错误: ${msg}`);
+  }
+}
+
+// ── Helper: Call Gemini API (returns raw text) ──
+async function callGeminiForText(prompt: string, config: ApiConfig): Promise<string> {
+  try {
+    const ai = new GoogleGenAI({ apiKey: config.apiKey });
+    const response = await ai.models.generateContent({
+      model: config.model || 'gemini-2.0-flash',
+      contents: prompt,
+    });
+    return response.text || '';
+  } catch (err: any) {
+    const msg = err?.message || err?.toString() || '未知错误';
+    throw new Error(`Gemini API 错误: ${msg}`);
+  }
+}
+
+// ── Helper: Call OpenAI-compatible API (DeepSeek, custom) ──
+async function callOpenAICompatible(
+  config: ApiConfig,
+  messages: Array<{ role: string; content: string }>,
+  temperature: number
+): Promise<string> {
+  let response: Response;
+  try {
+    response = await fetch(`${config.baseUrl}/chat/completions`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${config.apiKey}`,
+      },
+      body: JSON.stringify({
+        model: config.model,
+        messages,
+        temperature,
+      }),
+    });
+  } catch (err: any) {
+    throw new Error(`网络错误: 无法连接到 ${config.baseUrl}。请检查 Base URL 是否正确，以及网络是否可用。`);
+  }
+
+  if (!response.ok) {
+    let detail = response.statusText;
+    try {
+      const errBody = await response.json();
+      detail = errBody?.error?.message || errBody?.message || JSON.stringify(errBody);
+    } catch { /* ignore parse error */ }
+    throw new Error(`API 错误 (${response.status}): ${detail}`);
+  }
+
+  const data = await response.json();
+  return data.choices?.[0]?.message?.content || '';
 }
 
 function parseWords(text: string): string[] {

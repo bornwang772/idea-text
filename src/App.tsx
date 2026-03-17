@@ -15,7 +15,7 @@ const DEFAULT_CONFIG: ApiConfig = {
   provider: 'gemini',
   apiKey: process.env.GEMINI_API_KEY || '',
   baseUrl: 'https://api.deepseek.com/v1',
-  model: 'gemini-3.1-flash-lite-preview',
+  model: 'gemini-2.0-flash',
   expandPrompt: '你是一个创意发散助手。请根据给定的词语，联想出7-8个相关的词语或短语。只返回词语，用逗号分隔，不要有其他解释。尽量提供有网感、新颖的词汇。',
   ideaPrompt: '你是一个创意策划专家。请根据以下选中的词语，生成3个有创意的方案或点子。要求新颖、有趣、有网感。',
 };
@@ -173,7 +173,8 @@ export default function App() {
     } catch (error) {
       console.error(error);
       setNodes(prev => prev.map(n => n.id === node.id ? { ...n, isLoading: false } : n));
-      alert('获取联想词失败，请检查 API 设置。');
+      const errMsg = error instanceof Error ? error.message : '未知错误';
+      alert(`获取联想词失败：${errMsg}`);
     }
   };
 
@@ -277,7 +278,8 @@ export default function App() {
       setIdeas(result);
     } catch (error) {
       console.error(error);
-      alert('生成创意失败，请检查 API 设置。');
+      const errMsg = error instanceof Error ? error.message : '未知错误';
+      alert(`生成创意失败：${errMsg}`);
     } finally {
       setIsGeneratingIdeas(false);
     }
