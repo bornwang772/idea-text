@@ -12,10 +12,10 @@ import { FavoritesPanel } from './components/FavoritesPanel';
 import { fetchAssociations, fetchTranslation, generateIdeas } from './services/api';
 
 const DEFAULT_CONFIG: ApiConfig = {
-  provider: 'gemini',
-  apiKey: process.env.GEMINI_API_KEY || '',
-  baseUrl: 'https://api.deepseek.com/v1',
-  model: 'gemini-2.0-flash',
+  provider: 'deepseek',
+  apiKey: '',
+  baseUrl: 'https://api.deepseek.com',
+  model: 'deepseek-chat',
   expandPrompt: '你是一个创意发散助手。请根据给定的词语，联想出7-8个相关的词语或短语。只返回词语，用逗号分隔，不要有其他解释。尽量提供有网感、新颖的词汇。',
   ideaPrompt: '你是一个创意策划专家。请根据以下选中的词语，生成3个有创意的方案或点子。要求新颖、有趣、有网感。',
 };

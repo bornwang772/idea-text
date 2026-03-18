@@ -21,7 +21,7 @@ export interface LinkData {
 }
 
 export interface ApiConfig {
-  provider: 'deepseek' | 'gemini' | 'custom';
+  provider: 'deepseek' | 'kimi' | 'qwen' | 'zhipu' | 'gemini' | 'custom';
   apiKey: string;
   baseUrl: string;
   model: string;
